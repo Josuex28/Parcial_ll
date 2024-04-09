@@ -13,7 +13,7 @@ public class ObtenerDatosServidor extends AsyncTask<String,String,String> {
     HttpURLConnection httpURLConnection;
     @Override
     protected String doInBackground(String... voids) {
-        StringBuilder resul = new StringBuilder();
+        StringBuilder result = new StringBuilder();
         try {
             URL url = new URL(utilidades.urlConsulta);
             httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -25,14 +25,14 @@ public class ObtenerDatosServidor extends AsyncTask<String,String,String> {
 
             String linea;
             while ((linea=bufferedReader.readLine())!=null){
-                resul.append(linea);
+                result.append(linea);
             }
         }catch (Exception e){
             return e.getMessage();
     }finally {
           httpURLConnection.disconnect();
         }
-        return resul.toString();
+        return result.toString();
         }
 
     @Override
