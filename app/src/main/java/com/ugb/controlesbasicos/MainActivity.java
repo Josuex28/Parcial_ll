@@ -79,9 +79,10 @@ public class MainActivity extends AppCompatActivity {
                     String precio = tempVal.getText().toString();
 
                     JSONObject datosProductos = new JSONObject();
-                    if (accion.equals("modificar") && id.length() > 0 && rev.length() > 0) {
-                        datosProductos.put("_id", id );
+                    if ( accion.equals("modificar") && id.length()>0 && rev.length()>0){
+                        datosProductos.put("_id", id);
                         datosProductos.put("_rev", rev);
+
                     }
                     datosProductos.put("idProducto", idProducto);
                     datosProductos.put("codigo", codigo);
@@ -89,30 +90,31 @@ public class MainActivity extends AppCompatActivity {
                     datosProductos.put("marca", marca);
                     datosProductos.put("presentacion", presentacion);
                     datosProductos.put("precio", precio);
-                    datosProductos.put("foto", urlCompletaImg);
+                    datosProductos.put("urlfotoCompleta", urlCompletaImg);
                     String respuesta = "";
 
                     EnviarDatosServidor objGuardarDatosServidor = new EnviarDatosServidor(getApplicationContext());
                     respuesta = objGuardarDatosServidor.execute(datosProductos.toString()).get();
 
                     JSONObject respuestaJSONObject = new JSONObject(respuesta);
-                    if (respuestaJSONObject.getBoolean("oK")) {
+                    if( respuestaJSONObject.getBoolean("ok") ){
                         id = respuestaJSONObject.getString("id");
                         rev = respuestaJSONObject.getString("rev");
-                    } else {
-                        respuesta = "Error alguardar en servidor:" + respuesta;
+                    }else{
+                        respuesta = "Error al guardar en servidor: "+ respuesta;
                     }
+
                     DB db = new DB(getApplicationContext(), "", null, 1);
-                    String[] datos = new String[]{id, codigo, descripcion, marca, presentacion, precio, urlCompletaImg};
-                     respuesta = db.administrar_Productos(accion, datos);
+                    String[] datos = new String[]{id, rev, idProducto, codigo, descripcion, marca, presentacion, precio, urlCompletaImg};
+                    respuesta = db.administrar_Productos(accion, datos);
                     if (respuesta.equals("ok")) {
                         Toast.makeText(getApplicationContext(), "Producto Registrado con Exito.", Toast.LENGTH_SHORT).show();
                         regresarListaProducto();
                     } else {
                         Toast.makeText(getApplicationContext(), "Error:  " + respuesta, Toast.LENGTH_LONG).show();
                     }
-                } catch (Exception e) {
-                    mostrarMsg("Error al guardar:" + e.getMessage());
+                }catch (Exception e){
+                    mostrarMsg("Error al guardar: "+ e.getMessage());
                 }
             }
         });
