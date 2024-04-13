@@ -75,8 +75,8 @@ public class lista_producto extends AppCompatActivity {
             jsonObject = new JSONObject(data);
             datosJSON = jsonObject.getJSONArray("rows");
             MostrarProductos();
-        } catch (Exception e) {
-            mostrarMsg("Error al obtener datos desde el servidor:"+ e.getMessage());
+        }catch (Exception e){
+            mostrarMsg("Error al obtener datos desde el servidor: "+ e.getMessage());
         }
     }
     private void MostrarProductos() {
@@ -91,6 +91,8 @@ public class lista_producto extends AppCompatActivity {
                 for (int i = 0; i<datosJSON.length(); i++) {
                     misProductosJSONObject = datosJSON.getJSONObject(i).getJSONObject("value");
                     misProductos = new producto(
+                            misProductosJSONObject.getString("_id"),
+                            misProductosJSONObject.getString("_rev"),
                             misProductosJSONObject.getString("idProducto"),
                             misProductosJSONObject.getString("codigo"),
                             misProductosJSONObject.getString("descripcion"),
@@ -121,7 +123,7 @@ public class lista_producto extends AppCompatActivity {
         try {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             posicion = info.position;
-            menu.setHeaderTitle(datosJSON.getJSONObject(posicion).getJSONObject("values").getString("Codigo"));
+            menu.setHeaderTitle(datosJSON.getJSONObject(posicion).getJSONObject("values").getString("codigo"));
         } catch (Exception e) {
             mostrarMsg("Error al mostrar el menu:" + e.getMessage());
         }
@@ -156,14 +158,14 @@ public class lista_producto extends AppCompatActivity {
     private void eliminarProducto(){
         try {
             AlertDialog.Builder confirmacion = new AlertDialog.Builder(lista_producto.this);
-            confirmacion.setTitle("Estas seguro de eliminar el producto: ");
-            confirmacion.setMessage(cProducto.getString(3));
+            confirmacion.setTitle("Esta seguro de Eliminar a: ");
+            confirmacion.setMessage(datosJSON.getJSONObject(posicion).getJSONObject("value").getString("codigo"));
             confirmacion.setPositiveButton("SI", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     try {
 
-                        String respuesta = db_producto.administrar_Productos("eliminar", new String[]{cProducto.getString(0)});
+                        String respuesta = db_producto.administrar_Productos("eliminar", new String[]{"", "", datosJSON.getJSONObject(posicion).getJSONObject("value").getString("idProducto")});
                         if (respuesta.equals("ok")) {
                             mostrarMsg("Producto eliminado con exito.");
                             obtenerProducto();
@@ -203,20 +205,22 @@ public class lista_producto extends AppCompatActivity {
                 do {
                     jsonObject = new JSONObject();
                     JSONObject jsonObjectValues = new JSONObject();
-                    jsonObject.put("idProducto", cProducto.getString(0));
-                    jsonObject.put("codigo", cProducto.getString(1));
-                    jsonObject.put("descripcion", cProducto.getString(2));
-                    jsonObject.put("marca", cProducto.getString(3));
-                    jsonObject.put("presentacion", cProducto.getString(4));
-                    jsonObject.put("precio", cProducto.getString(5));
-                    jsonObject.put("foto", cProducto.getString(6));
+                    jsonObject.put("id",cProducto.getString(0));
+                    jsonObject.put("_rev",cProducto.getString(1));
+                    jsonObject.put("idProducto", cProducto.getString(2));
+                    jsonObject.put("codigo", cProducto.getString(3));
+                    jsonObject.put("descripcion", cProducto.getString(4));
+                    jsonObject.put("marca", cProducto.getString(5));
+                    jsonObject.put("presentacion", cProducto.getString(6));
+                    jsonObject.put("precio", cProducto.getString(7));
+                    jsonObject.put("foto", cProducto.getString(8));
 
                     jsonObjectValues.put("values", jsonObject);
                     datosJSON.put(jsonObjectValues);
                 } while (cProducto.moveToNext());
                 MostrarProductos();
             } else {
-                mostrarMsg("No hay amogos que mostrar");
+                mostrarMsg("No hay productos que mostrar");
             }
         } catch (Exception e) {
             mostrarMsg("Error al obtener productos: "+ e.getMessage());

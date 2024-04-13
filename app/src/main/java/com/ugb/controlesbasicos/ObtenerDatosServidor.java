@@ -9,34 +9,35 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ObtenerDatosServidor extends AsyncTask<String,String,String> {
+public class ObtenerDatosServidor extends AsyncTask<String, String, String> {
     HttpURLConnection httpURLConnection;
     @Override
     protected String doInBackground(String... voids) {
         StringBuilder result = new StringBuilder();
-        try {
+        try{
             URL url = new URL(utilidades.urlConsulta);
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.setRequestProperty("Authorization","Basic"+ utilidades.credencialesCodificadas);
+            httpURLConnection.setRequestProperty("Authorization", "Basic "+ utilidades.credencialesCodificadas);
 
             InputStream inputStream = new BufferedInputStream(httpURLConnection.getInputStream());
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
             String linea;
-            while ((linea=bufferedReader.readLine())!=null){
+            while((linea=bufferedReader.readLine())!=null){
                 result.append(linea);
             }
         }catch (Exception e){
             return e.getMessage();
-    }finally {
-          httpURLConnection.disconnect();
+        }finally {
+            httpURLConnection.disconnect();
         }
         return result.toString();
-        }
+    }
 
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
     }
 }
+
