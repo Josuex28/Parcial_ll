@@ -132,18 +132,16 @@ public class lista_producto extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         try {
-            switch (item.getItemId()) {
+            switch (item.getItemId()){
                 case R.id.mnxAgregar:
                     parametros.putString("accion", "nuevo");
                     abrirActividad(parametros);
                     break;
-
                 case R.id.mnxModificar:
-                    parametros.putString("accion", "modificar");
-                    parametros.putString("producto",datosJSON.getJSONObject(posicion).toString());
+                    parametros.putString("accion","modificar");
+                    parametros.putString("productos", datosJSON.getJSONObject(posicion).toString());
                     abrirActividad(parametros);
                     break;
-
                 case R.id.mnxEliminar:
                     eliminarProducto();
                     break;
