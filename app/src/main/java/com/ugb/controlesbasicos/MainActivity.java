@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                     datosProductos.put("marca", marca);
                     datosProductos.put("presentacion", presentacion);
                     datosProductos.put("precio", precio);
-                    datosProductos.put("urlfotoCompleta", urlCompletaImg);
+                    datosProductos.put("foto", urlCompletaImg);
                     String respuesta = "";
 
                     EnviarDatosServidor objGuardarDatosServidor = new EnviarDatosServidor(getApplicationContext());
