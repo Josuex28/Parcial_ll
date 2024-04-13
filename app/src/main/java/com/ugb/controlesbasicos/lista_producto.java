@@ -118,14 +118,15 @@ public class lista_producto extends AppCompatActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.mimenu, menu);
-        try {
+        try{
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             posicion = info.position;
-            menu.setHeaderTitle(datosJSON.getJSONObject(posicion).getJSONObject("values").getString("codigo"));
-        } catch (Exception e) {
-            mostrarMsg("Error al mostrar el menu:" + e.getMessage());
+            menu.setHeaderTitle(datosJSON.getJSONObject(posicion).getJSONObject("value").getString("codigo"));//1 es el nombre del producto
+        }catch (Exception e){
+            mostrarMsg("Error al mostrar el menu: "+ e.getMessage());
         }
     }
 
@@ -162,16 +163,15 @@ public class lista_producto extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     try {
-
                         String respuesta = db_producto.administrar_Productos("eliminar", new String[]{"", "", datosJSON.getJSONObject(posicion).getJSONObject("value").getString("idProducto")});
                         if (respuesta.equals("ok")) {
-                            mostrarMsg("Producto eliminado con exito.");
+                            mostrarMsg("producto eliminado con exito.");
                             obtenerProducto();
                         } else {
                             mostrarMsg("Error al eliminar producto: " + respuesta);
                         }
                     }catch (Exception e){
-                        mostrarMsg("Error al eliminar producto:"+ e.getMessage());
+                        mostrarMsg("1: "+e.getMessage());
                     }
                 }
             });

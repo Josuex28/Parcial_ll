@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
             Bundle parametros = getIntent().getExtras();
             accion = parametros.getString("accion");
             if( accion.equals("modificar") ){
-                JSONObject jsonObject = new JSONObject(parametros.getString("producto")).getJSONObject("value");
+                JSONObject jsonObject = new JSONObject(parametros.getString("productos")).getJSONObject("value");
                 id = jsonObject.getString("_id");
                 rev = jsonObject.getString("_rev");
                 idProducto = jsonObject.getString("idProducto");
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 tempVal = findViewById(R.id.txtprecio);
                 tempVal.setText(jsonObject.getString("precio"));
 
-                urlCompletaImg = jsonObject.getString("urlCompletaFoto");
+                urlCompletaImg = jsonObject.getString("foto");
                 Bitmap bitmap = BitmapFactory.decodeFile(urlCompletaImg);
                 img.setImageBitmap(bitmap);
 
@@ -224,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
                 idProducto = utls.generarIdUnico();
             }
         }catch (Exception e){
-            mostrarMsg("Error al mostrar los datos:"+ e.getMessage());
+            Toast.makeText(getApplicationContext(), "Error al mostrar los datos: "+ e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 }

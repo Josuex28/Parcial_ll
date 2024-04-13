@@ -31,14 +31,15 @@ public class DB extends SQLiteOpenHelper {
             String miTabla = "Productos";
             valoresProducto.put("idProducto", datos[0]);
             if (datos.length>1) {
-                valoresProducto.put("codigo",datos[1]);
+
+                valoresProducto.put("codigo", datos[1]);
                 valoresProducto.put("descripcion", datos[2]);
                 valoresProducto.put("marca", datos[3]);
                 valoresProducto.put("presentacion", datos[4]);
                 valoresProducto.put("precio", datos[5]);
                 valoresProducto.put("foto", datos[6]);
-                valoresProducto.put("id", datos[7]);
-                valoresProducto.put("rev", datos[8]);
+                valoresProducto.put("id",datos[7]);
+                valoresProducto.put("rev",datos[8]);
             }
             SQLiteDatabase db = getWritableDatabase();
             switch (accion){
@@ -49,6 +50,8 @@ public class DB extends SQLiteOpenHelper {
                     this.getWritableDatabase().update(miTabla,valoresProducto,whereClause,whereArgs);
                     break;
                 case "eliminar":
+
+
                     this.getWritableDatabase().delete(miTabla,whereClause,whereArgs);
                     break;
             }
