@@ -26,6 +26,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class lista_producto extends AppCompatActivity {
@@ -48,6 +50,8 @@ public class lista_producto extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lista_producto);
 
+        db_producto = new DB(lista_producto.this, "", null, 1);
+
         btn = findViewById(R.id.btnAbrirNuevosProductos);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +72,7 @@ public class lista_producto extends AppCompatActivity {
         }
         buscarProducto();
     }
+
     private void obtenerDatosProductosServidor(){
         try {
             datosServidor = new ObtenerDatosServidor();
@@ -81,14 +86,14 @@ public class lista_producto extends AppCompatActivity {
     }
     private void MostrarProductos() {
         try {
-            if (datosJSON.length() > 0) {
+            if (datosJSON.length()>0 ) {
                 lts = findViewById(R.id.ltsProducto);
 
                 alProducto.clear();
                 alProductoCopy.clear();
 
                 JSONObject misProductosJSONObject;
-                for (int i = 0; i<datosJSON.length(); i++) {
+                for (int i=0; i<datosJSON.length(); i++) {
                     misProductosJSONObject = datosJSON.getJSONObject(i).getJSONObject("value");
                     misProductos = new producto(
                             misProductosJSONObject.getString("_id"),
@@ -158,7 +163,7 @@ public class lista_producto extends AppCompatActivity {
         try {
             AlertDialog.Builder confirmacion = new AlertDialog.Builder(lista_producto.this);
             confirmacion.setTitle("Esta seguro de Eliminar a: ");
-            confirmacion.setMessage(datosJSON.getJSONObject(posicion).getJSONObject("value").getString("codigo"));
+            confirmacion.setMessage(datosJSON.getJSONObject(posicion).getJSONObject("value").getString("marca"));
             confirmacion.setPositiveButton("SI", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -171,7 +176,7 @@ public class lista_producto extends AppCompatActivity {
                             mostrarMsg("Error al eliminar producto: " + respuesta);
                         }
                     }catch (Exception e){
-                        mostrarMsg("1: "+e.getMessage());
+                        mostrarMsg("Error al eliminar Datos: "+e.getMessage());
                     }
                 }
             });
@@ -198,12 +203,12 @@ public class lista_producto extends AppCompatActivity {
     private void obtenerProducto(){
         try {
             cProducto = db_producto.consultar_Productos();
-            if (cProducto.moveToFirst()) {
+            if (cProducto.moveToFirst() ) {
                 datosJSON = new JSONArray();
                 do {
                     jsonObject = new JSONObject();
-                    JSONObject jsonObjectValues = new JSONObject();
-                    jsonObject.put("id",cProducto.getString(0));
+                    JSONObject jsonObjectValue = new JSONObject();
+                    jsonObject.put("_id",cProducto.getString(0));
                     jsonObject.put("_rev",cProducto.getString(1));
                     jsonObject.put("idProducto", cProducto.getString(2));
                     jsonObject.put("codigo", cProducto.getString(3));
@@ -213,9 +218,9 @@ public class lista_producto extends AppCompatActivity {
                     jsonObject.put("precio", cProducto.getString(7));
                     jsonObject.put("foto", cProducto.getString(8));
 
-                    jsonObjectValues.put("values", jsonObject);
-                    datosJSON.put(jsonObjectValues);
-                } while (cProducto.moveToNext());
+                    jsonObjectValue.put("value", jsonObject);
+                    datosJSON.put(jsonObjectValue);
+                }while(cProducto.moveToNext());
                 MostrarProductos();
             } else {
                 mostrarMsg("No hay productos que mostrar");
@@ -227,6 +232,7 @@ public class lista_producto extends AppCompatActivity {
     private void mostrarMsg(String msg){
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
+
     private void buscarProducto(){
         TextView tempVal;
         tempVal = findViewById(R.id.txtBuscarProducto);
@@ -244,11 +250,11 @@ public class lista_producto extends AppCompatActivity {
                         alProducto.addAll(alProductoCopy);
                     }else{
                         for( producto Producto : alProductoCopy ){
-                            String nombre = Producto.getMarca();
+                            String codigo = Producto.getCodigo();
                             String descripcion = Producto.getDescripcion();
                             String marca = Producto.getMarca();
                             String presentacion = Producto.getPresentacion();
-                            if( nombre.toLowerCase().trim().contains(valor) ||
+                            if( codigo.toLowerCase().trim().contains(valor) ||
                                     descripcion.toLowerCase().trim().contains(valor) ||
                                     marca.trim().contains(valor) ||
                                     presentacion.trim().toLowerCase().contains(valor) ){

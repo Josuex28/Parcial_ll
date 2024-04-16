@@ -4,8 +4,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 public class utilidades {
-    static String urlConsulta = "http://192.168.43.181:5984/tiendaonline/_design/tiendaonline/_view/tiendaonline";
-    static String urlMto = "http://192.168.43.181:5984/tiendaonline";
+    static String urlConsulta = "http://192.168.0.5:5984/tiendaonline/_design/tiendaonline/_view/tiendaonline";
+    static String urlMto = "http://192.168.0.5:5984/tiendaonline";
     static String user = "Josue";
     static String passwd = "ajedimoou";
     static String credencialesCodificadas = Base64.getEncoder().encodeToString((user +":"+ passwd).getBytes());

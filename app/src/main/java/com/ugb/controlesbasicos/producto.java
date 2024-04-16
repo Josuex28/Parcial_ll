@@ -21,7 +21,7 @@ public class producto {
         this.foto=foto;
     }
 
-    public String getIdAmigo() {
+    public String getIdProducto() {
         return idProducto;
     }
     public void setIdProducto(String idProducto) {

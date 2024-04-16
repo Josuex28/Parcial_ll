@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tempVal;
     Button btn;
     FloatingActionButton btnRegresar;
-    String accion = "nuevo", id = "", urlCompletaImg = "", rev = "", idProducto = "";
+    String accion = "nuevo", id = "", foto = "", rev = "", idProducto = "";
     Intent tomarFotoIntent;
     ImageView img;
     utilidades utls;
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                     datosProductos.put("marca", marca);
                     datosProductos.put("presentacion", presentacion);
                     datosProductos.put("precio", precio);
-                    datosProductos.put("foto", urlCompletaImg);
+                    datosProductos.put("foto", foto);
                     String respuesta = "";
 
                     EnviarDatosServidor objGuardarDatosServidor = new EnviarDatosServidor(getApplicationContext());
@@ -105,8 +106,9 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     DB db = new DB(getApplicationContext(), "", null, 1);
-                    String[] datos = new String[]{id, rev, idProducto, codigo, descripcion, marca, presentacion, precio, urlCompletaImg};
+                    String[] datos = new String[]{id, rev, idProducto, codigo, descripcion, marca, presentacion, precio, foto};
                     respuesta = db.administrar_Productos(accion, datos);
+
                     if (respuesta.equals("ok")) {
                         Toast.makeText(getApplicationContext(), "Producto Registrado con Exito.", Toast.LENGTH_SHORT).show();
                         regresarListaProducto();
@@ -126,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (requestCode == 1 && resultCode == RESULT_OK) {
-                Bitmap imagenBitmap = BitmapFactory.decodeFile(urlCompletaImg);
+                Bitmap imagenBitmap = BitmapFactory.decodeFile(foto);
                 img.setImageBitmap(imagenBitmap);
             } else {
                 mostrarMsg("Se cancelo la toma de la foto");
@@ -166,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
             dirAlmacenamiento.mkdirs();
         }
         File image = File.createTempFile(fileName, ".jpg", dirAlmacenamiento);
-        urlCompletaImg = image.getAbsolutePath();
+        foto = image.getAbsolutePath();
         return image;
     }
 
@@ -180,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         File image = File.createTempFile(fileName, ".jpg", dirAlmacenamiento);
-        urlCompletaImg = image.getAbsolutePath();
+        foto = image.getAbsolutePath();
         return image;
     }
     private void mostrarMsg(String msg){
@@ -216,8 +218,8 @@ public class MainActivity extends AppCompatActivity {
                 tempVal = findViewById(R.id.txtprecio);
                 tempVal.setText(jsonObject.getString("precio"));
 
-                urlCompletaImg = jsonObject.getString("foto");
-                Bitmap bitmap = BitmapFactory.decodeFile(urlCompletaImg);
+                foto = jsonObject.getString("foto");
+                Bitmap bitmap = BitmapFactory.decodeFile(foto);
                 img.setImageBitmap(bitmap);
 
             }else {
