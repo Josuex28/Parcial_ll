@@ -33,7 +33,7 @@ public class DB extends SQLiteOpenHelper {
                 db.execSQL("UPDATE Productos SET id='" + datos[0] + "',rev='" + datos[1] + "', codigo='" + datos[3] + "',descripcion='" + datos[4] + "',marca='" +
                         datos[5] + "',presentacion='" + datos[6] + "',precio='" + datos[7] + "', foto='" + datos[8] + "' WHERE idProducto='" + datos[2] + "'");
             } else if (accion.equals("eliminar")) {
-                db.execSQL("DELETE FROM Productos WHERE idProducto='"+ datos[2] +"'");
+                db.execSQL("DELETE FROM Productos WHERE idProducto='"+ datos[0] +"'");
             }
             return "ok";
         } catch (Exception e) {

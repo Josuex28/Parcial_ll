@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class lista_producto extends AppCompatActivity {
     Bundle parametros = new Bundle();
@@ -45,6 +46,7 @@ public class lista_producto extends AppCompatActivity {
     ObtenerDatosServidor datosServidor;
     DetectarInternet di;
     int posicion = 0;
+    String respuesta = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +69,7 @@ public class lista_producto extends AppCompatActivity {
             }else {
                 obtenerProducto();
             }
+            subirDatos();
         } catch (Exception e) {
             mostrarMsg("Error al detectar si hay conexion"+ e.getMessage());
         }
@@ -114,7 +117,13 @@ public class lista_producto extends AppCompatActivity {
 
                 registerForContextMenu(lts);
             } else {
+                alProducto.clear();
+                adaptadorImagenes adImagenes = new adaptadorImagenes(getApplicationContext(), alProducto);
+                lts.setAdapter(adImagenes);
+                adImagenes.notifyDataSetChanged();
+
                 mostrarMsg("No hay datos que mostrar.");
+
             }
         } catch (Exception e) {
             mostrarMsg("Error al mostrar datos:" + e.getMessage());
@@ -163,15 +172,16 @@ public class lista_producto extends AppCompatActivity {
         try {
             AlertDialog.Builder confirmacion = new AlertDialog.Builder(lista_producto.this);
             confirmacion.setTitle("Esta seguro de Eliminar a: ");
-            confirmacion.setMessage(datosJSON.getJSONObject(posicion).getJSONObject("value").getString("marca"));
+            confirmacion.setMessage(datosJSON.getJSONObject(posicion).getJSONObject("value").getString("idProducto"));
             confirmacion.setPositiveButton("SI", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     try {
-                        String respuesta = db_producto.administrar_Productos("eliminar", new String[]{"", "", datosJSON.getJSONObject(posicion).getJSONObject("value").getString("idProducto")});
+                        String respuesta = db_producto.administrar_Productos("eliminar", new String[]{ datosJSON.getJSONObject(posicion).getJSONObject("value").getString("idProducto")});
                         if (respuesta.equals("ok")) {
                             mostrarMsg("producto eliminado con exito.");
                             obtenerProducto();
+                            subirDatos();
                         } else {
                             mostrarMsg("Error al eliminar producto: " + respuesta);
                         }
@@ -192,8 +202,47 @@ public class lista_producto extends AppCompatActivity {
         }
     }
 
+    private void subirDatos(){
+        try{
+            JSONObject misDatosJSONObject = new JSONObject();
+            if (datosJSON.length()>0){
+                for (int i=0; i<datosJSON.length(); i++) {
+                    misDatosJSONObject = datosJSON.getJSONObject(i).getJSONObject("value");
 
+                    if(misDatosJSONObject.getString("_id").equals("")&& misDatosJSONObject.getString("_rev").equals("")){
+                        guardarDatosServidor(misDatosJSONObject);
+                       // mostrarMsg(misDatosJSONObject.toString());
+                    }
+                }
+                //* guardarDatosServidor(misDatosJSONObject);
+            }
 
+        }catch (Exception e){mostrarMsg("Error al sincronizar: "+e.getMessage());}
+    }
+
+    private void guardarDatosServidor(JSONObject datosProductos){
+        try {
+            mostrarMsg("guardarDatosServidor");
+            String respuesta = "";
+            datosProductos.remove("_id");
+            datosProductos.remove("_rev");
+            EnviarDatosServidor objGuardarDatosServidor = new EnviarDatosServidor(getApplicationContext());
+            respuesta = objGuardarDatosServidor.execute(datosProductos.toString()).get();
+            JSONObject respuestaJSONObject = new JSONObject(respuesta);
+            mostrarMsg(respuesta);
+            if (respuestaJSONObject.getBoolean("ok")) {
+                mostrarMsg("Datos sincronizados los datos");
+                obtenerDatosProductosServidor();
+            }
+            else{
+                mostrarMsg("Error al sincronizar los datos");
+            }
+        }catch (Exception e) {
+
+            mostrarMsg("Error en server: "+e.getMessage());
+        }
+
+    }
 
     private void abrirActividad(Bundle parametros){
         Intent abriVentana = new Intent(getApplicationContext(), MainActivity.class);
@@ -223,6 +272,11 @@ public class lista_producto extends AppCompatActivity {
                 }while(cProducto.moveToNext());
                 MostrarProductos();
             } else {
+                alProducto.clear();
+                adaptadorImagenes adImagenes = new adaptadorImagenes(getApplicationContext(), alProducto);
+                lts.setAdapter(adImagenes);
+                adImagenes.notifyDataSetChanged();
+
                 mostrarMsg("No hay productos que mostrar");
             }
         } catch (Exception e) {

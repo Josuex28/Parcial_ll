@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     Intent tomarFotoIntent;
     ImageView img;
     utilidades utls;
+    DetectarInternet di;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,15 +95,20 @@ public class MainActivity extends AppCompatActivity {
                     datosProductos.put("foto", foto);
                     String respuesta = "";
 
-                    EnviarDatosServidor objGuardarDatosServidor = new EnviarDatosServidor(getApplicationContext());
-                    respuesta = objGuardarDatosServidor.execute(datosProductos.toString()).get();
+                    di = new DetectarInternet(getApplicationContext());
 
-                    JSONObject respuestaJSONObject = new JSONObject(respuesta);
-                    if( respuestaJSONObject.getBoolean("ok") ){
-                        id = respuestaJSONObject.getString("id");
-                        rev = respuestaJSONObject.getString("rev");
-                    }else{
-                        respuesta = "Error al guardar en servidor: "+ respuesta;
+                    if(di.hayConexionInternet()){
+                        EnviarDatosServidor objGuardarDatosServidor = new EnviarDatosServidor(getApplicationContext());
+                        respuesta = objGuardarDatosServidor.execute(datosProductos.toString()).get();
+
+                        JSONObject respuestaJSONObject = new JSONObject(respuesta);
+
+                        if( respuestaJSONObject.getBoolean("ok") ){
+                            id = respuestaJSONObject.getString("id");
+                            rev = respuestaJSONObject.getString("rev");
+                        }else{
+                            respuesta = "Error al guardar en servidor: "+ respuesta;
+                        }
                     }
 
                     DB db = new DB(getApplicationContext(), "", null, 1);
